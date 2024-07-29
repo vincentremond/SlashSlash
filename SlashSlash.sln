@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SlashSlash", "SlashSlash\SlashSlash.fsproj", "{341F8919-EE1C-4F1E-BF20-58A83F0CBFBE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{0271AEB4-A1F6-497E-8F04-1CAE34B9C576}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		paket.dependencies = paket.dependencies
+		paket.lock = paket.lock
+		README.md = README.md
+		build.cmd = build.cmd
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{341F8919-EE1C-4F1E-BF20-58A83F0CBFBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{341F8919-EE1C-4F1E-BF20-58A83F0CBFBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{341F8919-EE1C-4F1E-BF20-58A83F0CBFBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{341F8919-EE1C-4F1E-BF20-58A83F0CBFBE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
