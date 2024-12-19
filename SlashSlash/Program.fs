@@ -10,7 +10,10 @@ open TextCopy
 
 [<RequireQualifiedAccess>]
 module List =
-    let apply v l = l |> List.map (fun f -> f v)
+    let apply value list = list |> List.map (fun f -> f value)
+
+    let applySnd value list =
+        list |> List.map (fun (a, f) -> (a, f value))
 
 [<RequireQualifiedAccess>]
 module String =
@@ -22,6 +25,16 @@ module String =
             s.Substring(0, s.Length - end_.Length)
         else
             s
+
+    let trimChar (c: char) (s: string) = s.Trim(c)
+
+    let trimSingleChar (c: char) (s: string) =
+        if s.Length > 2 && s.StartsWith(c) && s.EndsWith(c) then
+            s.Substring(1, s.Length - 2)
+        else
+            s
+
+    let trimString (toTrim: string) = (trimStart toTrim >> trimEnd toTrim)
 
     let replace (oldValue: string) (newValue: string) (s: string) = s.Replace(oldValue, newValue)
 
@@ -40,11 +53,11 @@ AnsiConsole.markupLineInterpolated $"Clipboard content: [yellow]{clipboardConten
 let conventionalCommitRegex =
     Regex(@"^(?<type>(fix|feat))(?:\((?<scope>[\w]+)\))?: (?<description>.+)$", RegexOptions.Compiled)
 
-let options =
+let options: (string * string) list =
     if conventionalCommitRegex.IsMatch(clipboardContent) then
         let m = conventionalCommitRegex.Match(clipboardContent)
 
-        let description =
+        let conventionalCommitDescription =
             m.Groups.["description"].Value
             |> String.replaceDiacritics
             |> String.replace " " "-"
@@ -55,9 +68,10 @@ let options =
             else
                 ""
 
-        [ $"""{m.Groups.["type"].Value}/{description}{scope}""" ]
+        [ "Branch name", $"""{m.Groups.["type"].Value}/{conventionalCommitDescription}{scope}""" ]
     elif clipboardContent.StartsWith("javascript:") then
         [
+            "Bookmarklet",
             clipboardContent
             |> HttpUtility.UrlDecode
             |> String.trimStart "javascript:(function(){"
@@ -65,19 +79,28 @@ let options =
         ]
     else
         [
-            json
-            (sprintf "\"%s\"") >> json >> (fun c -> c.Substring(1, c.Length - 2))
-            json >> json
-            Regex.Escape
-            Regex.Escape >> json
+            "Json", json
+            "Json (double quote trimmed)", ((String.trimChar '"') >> json)
+            "Json ( ?!? )", ((String.trimChar '"') >> json >> (String.trimSingleChar '"'))
+
+            "Json ( ?!? )", ((sprintf "\"%s\"") >> json >> (fun c -> c.Substring(1, c.Length - 2)))
+            "json²", (json >> json)
+            "Regex escape", Regex.Escape
+            "Regex escape + json", Regex.Escape >> json
         ]
-        |> List.apply clipboardContent
+        |> List.applySnd clipboardContent
+
+let maxLen = options |> List.map (fst >> String.length) |> List.max
 
 let choice =
     SelectionPrompt.init ()
-    |> SelectionPrompt.setTitle "Select a transformation"
+    |> SelectionPrompt.withTitle "Select a transformation"
     |> SelectionPrompt.addChoices options
+    |> SelectionPrompt.useConverter (fun (label, value) ->
+        $"[yellow]{label.PadRight(maxLen, '.')}[/]: {value |> Markup.escape}"
+    )
     |> AnsiConsole.prompt
+    |> snd
 
 clipboard.SetText(choice)
 
