@@ -4,4 +4,4 @@ dotnet paket update
 dotnet tool restore
 dotnet build
 
-add-to-path SlashSlash\bin\Debug\
+AddToPath .\SlashSlash\bin\Debug\
