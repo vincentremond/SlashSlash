@@ -44,7 +44,10 @@ module String =
         |> replace " " "-"
 
 let json (s: string) : string = JsonConvert.SerializeObject(s)
-
+let unitTestPatternA = Regex(@"[\s']")
+let unitTestA (s: string) : string =
+    unitTestPatternA.Replace(s, "_")
+    
 let clipboard = Clipboard()
 let clipboardContent = clipboard.GetText()
 
@@ -87,6 +90,7 @@ let options: (string * string) list =
             "json²", (json >> json)
             "Regex escape", Regex.Escape
             "Regex escape + json", Regex.Escape >> json
+            "Unit test A", unitTestA
         ]
         |> List.applySnd clipboardContent
 
