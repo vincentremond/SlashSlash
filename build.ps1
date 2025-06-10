@@ -1,6 +1,5 @@
-@echo off
+$ErrorActionPreference = "Stop"
 
-dotnet paket update
 dotnet tool restore
 dotnet build
 

@@ -45,9 +45,8 @@ module String =
 
 let json (s: string) : string = JsonConvert.SerializeObject(s)
 let unitTestPatternA = Regex(@"[\s']")
-let unitTestA (s: string) : string =
-    unitTestPatternA.Replace(s, "_")
-    
+let unitTestA (s: string) : string = unitTestPatternA.Replace(s, "_")
+
 let clipboard = Clipboard()
 let clipboardContent = clipboard.GetText()
 
