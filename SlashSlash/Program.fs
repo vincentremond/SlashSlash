@@ -5,6 +5,7 @@ open System.Text.RegularExpressions
 open System.Web
 open Newtonsoft.Json
 open Pinicola.FSharp.SpectreConsole
+open Pinicola.FSharp.RegularExpressions
 open Spectre.Console
 open TextCopy
 
@@ -53,7 +54,7 @@ let clipboardContent = clipboard.GetText()
 AnsiConsole.markupLineInterpolated $"Clipboard content: [yellow]{clipboardContent}[/]"
 
 let conventionalCommitRegex =
-    Regex(@"^(?<type>(fix|feat))(?:\((?<scope>[\w]+)\))?: (?<description>.+)$", RegexOptions.Compiled)
+    Regex(@"^(?<type>(fix|feat))(?:\((?<scope>.+)\))?: (?<description>.+)$", RegexOptions.Compiled)
 
 let options: (string * string) list =
     if conventionalCommitRegex.IsMatch(clipboardContent) then
@@ -66,7 +67,8 @@ let options: (string * string) list =
 
         let scope =
             if m.Groups.["scope"].Success then
-                "--" + m.Groups.["scope"].Value
+                let scope = m.Groups.["scope"].Value |> Regex.replace @"[^\w]" ""
+                "--" + scope
             else
                 ""
 
