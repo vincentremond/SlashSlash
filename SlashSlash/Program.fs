@@ -1,9 +1,9 @@
 ﻿open System
-open System.Diagnostics
 open System.Text
 open System.Text.RegularExpressions
 open System.Web
 open Newtonsoft.Json
+open Pinicola.FSharp
 open Pinicola.FSharp.SpectreConsole
 open Pinicola.FSharp.RegularExpressions
 open Spectre.Console
@@ -53,13 +53,9 @@ let clipboardContent = clipboard.GetText()
 
 AnsiConsole.markupLineInterpolated $"Clipboard content: [yellow]{clipboardContent}[/]"
 
-let conventionalCommitRegex =
-    Regex(@"^(?<type>(fix|feat))(?:\((?<scope>.+)\))?: (?<description>.+)$", RegexOptions.Compiled)
-
 let options: (string * string) list =
-    if conventionalCommitRegex.IsMatch(clipboardContent) then
-        let m = conventionalCommitRegex.Match(clipboardContent)
-
+    match clipboardContent with
+    | MatchRegex (Regex @"^(?<type>(fix|feat))(?:\((?<scope>.+)\))?: (?<description>.+)$") m ->
         let conventionalCommitDescription =
             m.Groups.["description"].Value
             |> String.replaceDiacritics
@@ -67,21 +63,20 @@ let options: (string * string) list =
 
         let scope =
             if m.Groups.["scope"].Success then
-                let scope = m.Groups.["scope"].Value |> Regex.replace @"[^\w]" ""
+                let scope = m.Groups.["scope"].Value |> Regex.replace' @"[^\w]" ""
                 "--" + scope
             else
                 ""
 
         [ "Branch name", $"""{m.Groups.["type"].Value}/{conventionalCommitDescription}{scope}""" ]
-    elif clipboardContent.StartsWith("javascript:") then
-        [
-            "Bookmarklet",
-            clipboardContent
-            |> HttpUtility.UrlDecode
-            |> String.trimStart "javascript:(function(){"
-            |> String.trimEnd "})();"
-        ]
-    else
+    | StartsWithICIC "javascript:" -> [
+        "Bookmarklet",
+        clipboardContent
+        |> HttpUtility.UrlDecode
+        |> String.trimStart "javascript:(function(){"
+        |> String.trimEnd "})();"
+      ]
+    | _ ->
         [
             "Json", json
             "Json (double quote trimmed)", ((String.trimChar '"') >> json)
@@ -99,7 +94,7 @@ let maxLen = options |> List.map (fst >> String.length) |> List.max
 
 let choice =
     SelectionPrompt.init ()
-    |> SelectionPrompt.withTitle "Select a transformation"
+    |> SelectionPrompt.withTitle (Raw "Select a transformation")
     |> SelectionPrompt.addChoices options
     |> SelectionPrompt.useConverter (fun (label, value) ->
         $"[yellow]{label.PadRight(maxLen, '.')}[/]: {value |> Markup.escape}"
