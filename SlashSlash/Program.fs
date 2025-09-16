@@ -69,6 +69,18 @@ let options: (string * string) list =
                 ""
 
         [ "Branch name", $"""{m.Groups.["type"].Value}/{conventionalCommitDescription}{scope}""" ]
+    // 291320 [PostOffice] Generate template text version automatically from HTML - Nice to have
+    | MatchRegex (Regex @"^(?<Id>\d+) \[\w+\] (?<Subject>.+)$") m ->
+        let id = m.Groups.["Id"].Value
+
+        let subject = m.Groups.["Subject"].Value
+        let branchSubject = subject |> String.replaceDiacritics |> String.replace " " "-"
+
+        [
+            "Branch name", $"""feat/{branchSubject}--{id}"""
+            "Commit message", $"""feat: {subject} #{id}"""
+        ]
+
     | StartsWithICIC "javascript:" -> [
         "Bookmarklet",
         clipboardContent
