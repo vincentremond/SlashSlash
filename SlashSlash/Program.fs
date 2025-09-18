@@ -104,19 +104,28 @@ let options: (string * string) list =
 
 let maxLen = options |> List.map (fst >> String.length) |> List.max
 
-let choice =
-    SelectionPrompt.init ()
-    |> SelectionPrompt.withTitle (Raw "Select a transformation")
-    |> SelectionPrompt.addChoices options
-    |> SelectionPrompt.useConverter (fun (label, value) ->
-        $"[yellow]{label.PadRight(maxLen, '.')}[/]: {value |> Markup.escape}"
-    )
-    |> AnsiConsole.prompt
-    |> snd
+let rec loop () =
+    let choice =
+        SelectionPrompt.init ()
+        |> SelectionPrompt.withTitle (Raw "Select a transformation")
+        |> SelectionPrompt.addChoices options
+        |> SelectionPrompt.useConverter (fun (label, value) ->
+            $"[yellow]{label.PadRight(maxLen, '.')}[/]: {value |> Markup.escape}"
+        )
+        |> AnsiConsole.prompt
+        |> snd
 
-clipboard.SetText(choice)
+    clipboard.SetText(choice)
 
-AnsiConsole.markupLineInterpolated $"New clipboard content: [yellow]{choice}[/]"
+    AnsiConsole.markupLineInterpolated $"New clipboard content: [yellow]{choice}[/]"
 
-if not (Environment.GetCommandLineArgs().Length > 1) then
-    AnsiConsole.Confirm("Press any key to exit...") |> ignore
+    let retry =
+        if (Environment.GetCommandLineArgs().Length > 1) then
+            false
+        else
+            not <| AnsiConsole.Confirm("Exit ? [gray]if no, you can do another transformation[/]", true)
+
+    if retry then
+        loop ()
+
+loop ()
