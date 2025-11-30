@@ -123,7 +123,8 @@ let rec loop () =
         if (Environment.GetCommandLineArgs().Length > 1) then
             false
         else
-            not <| AnsiConsole.Confirm("Exit ? [gray]if no, you can do another transformation[/]", true)
+            not
+            <| AnsiConsole.Confirm("Exit ? [gray]if no, you can do another transformation[/]", true)
 
     if retry then
         loop ()
