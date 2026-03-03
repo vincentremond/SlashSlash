@@ -1,12 +1,10 @@
-﻿open System
-open System.Text
+﻿open System.Text
 open System.Text.RegularExpressions
 open System.Web
 open Newtonsoft.Json
 open Pinicola.FSharp
 open Pinicola.FSharp.SpectreConsole
 open Pinicola.FSharp.RegularExpressions
-open Spectre.Console
 open TextCopy
 
 [<RequireQualifiedAccess>]
@@ -57,23 +55,22 @@ let options: (string * string) list =
     match clipboardContent with
     | MatchRegex (Regex @"^(?<type>(fix|feat))(?:\((?<scope>.+)\))?: (?<description>.+)$") m ->
         let conventionalCommitDescription =
-            m.Groups.["description"].Value
+            m.Groups["description"].Value
             |> String.replaceDiacritics
             |> String.replace " " "-"
 
         let scope =
-            if m.Groups.["scope"].Success then
-                let scope = m.Groups.["scope"].Value |> Regex.replace' @"[^\w]" ""
+            if m.Groups["scope"].Success then
+                let scope = m.Groups["scope"].Value |> Regex.replacePattern @"[^\w]" ""
                 "--" + scope
             else
                 ""
 
-        [ "Branch name", $"""{m.Groups.["type"].Value}/{conventionalCommitDescription}{scope}""" ]
-    // 291320 [PostOffice] Generate template text version automatically from HTML - Nice to have
+        [ "Branch name", $"""{m.Groups["type"].Value}/{conventionalCommitDescription}{scope}""" ]
     | MatchRegex (Regex @"^(?<Id>\d+) \[\w+\] (?<Subject>.+)$") m ->
-        let id = m.Groups.["Id"].Value
+        let id = m.Groups["Id"].Value
 
-        let subject = m.Groups.["Subject"].Value
+        let subject = m.Groups["Subject"].Value
         let branchSubject = subject |> String.replaceDiacritics |> String.replace " " "-"
 
         [
@@ -109,9 +106,7 @@ let rec loop () =
         SelectionPrompt.init ()
         |> SelectionPrompt.withTitle (Raw "Select a transformation")
         |> SelectionPrompt.addChoices options
-        |> SelectionPrompt.useConverter (fun (label, value) ->
-            $"[yellow]{label.PadRight(maxLen, '.')}[/]: {value |> Markup.escape}"
-        )
+        |> SelectionPrompt.useConverter (fun (label, value) -> SpectreConsoleString.fromInterpolated $"[yellow]{label.PadRight(maxLen, '.')}[/]: {value |> Markup.escape}")
         |> AnsiConsole.prompt
         |> snd
 
@@ -119,14 +114,6 @@ let rec loop () =
 
     AnsiConsole.markupLineInterpolated $"New clipboard content: [yellow]{choice}[/]"
 
-    let retry =
-        if (Environment.GetCommandLineArgs().Length > 1) then
-            false
-        else
-            not
-            <| AnsiConsole.Confirm("Exit ? [gray]if no, you can do another transformation[/]", true)
-
-    if retry then
-        loop ()
+    loop ()
 
 loop ()
