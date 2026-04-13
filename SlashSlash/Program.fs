@@ -8,16 +8,16 @@ AnsiConsole.markupLineInterpolated $"Clipboard content: [yellow]{clipboardConten
 
 let options = OptionsFactory.get clipboardContent
 
-let maxLen = options |> List.map (fst >> String.length) |> List.max
+let maxLen = options |> Map.keys |> Seq.map _.Length |> Seq.max
 
 let rec loop () =
     let choice =
         SelectionPrompt.init ()
         |> SelectionPrompt.withTitle (Raw "Select a transformation")
         |> SelectionPrompt.addChoices options
-        |> SelectionPrompt.useConverter (fun (label, value) -> SpectreConsoleString.fromInterpolated $"[yellow]{label.PadRight(maxLen, '.')}[/]: {value |> Markup.escape}")
+        |> SelectionPrompt.useConverter (fun kvp -> SpectreConsoleString.fromInterpolated $"[yellow]{kvp.Key.PadRight(maxLen, '.')}[/]: {kvp.Value |> Markup.escape}")
         |> AnsiConsole.prompt
-        |> snd
+        |> _.Value
 
     ClipboardService.SetText(choice)
 

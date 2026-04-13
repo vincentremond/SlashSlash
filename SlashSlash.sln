@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{0271AE
 		paket.lock = paket.lock
 		README.md = README.md
 		build.cmd = build.cmd
+		Directory.Build.Props = Directory.Build.Props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pinicola.FSharp", "Pinicola.FSharp", "{231E47F8-CF52-4008-ACF0-0DC7060DFEED}"

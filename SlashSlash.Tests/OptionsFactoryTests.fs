@@ -5,54 +5,51 @@ open AwesomeAssertions
 open SlashSlash
 
 [<TestFixture>]
-type OptionsFactoryTests() =
+module OptionsFactoryTests =
 
     [<Test>]
-    member _.``get with conventional commit (feat) returns Branch name``() =
+    let ``get with conventional commit (feat) returns Branch name`` () =
         let input = "feat(ui): add new button"
         let result = OptionsFactory.get input
 
-        let branchName = result |> List.find (fun (name, _) -> name = "Branch name") |> snd
+        let branchName = result |> Map.find "Branch name"
         branchName.Should().Be("feat/add-new-button--ui") |> ignore
 
     [<Test>]
-    member _.``get with conventional commit (fix) returns Branch name``() =
+    let ``get with conventional commit (fix) returns Branch name`` () =
         let input = "fix: resolve memory leak"
         let result = OptionsFactory.get input
 
-        let branchName = result |> List.find (fun (name, _) -> name = "Branch name") |> snd
+        let branchName = result |> Map.find "Branch name"
         branchName.Should().Be("fix/resolve-memory-leak") |> ignore
 
     [<Test>]
-    member _.``get with Work Item pattern returns Branch name and Commit message``() =
-        let input = "#123 [core] update dependencies"
+    [<TestCase("#123 [core] update dependencies", "feat/update-dependencies--123", "feat: update dependencies #123")>]
+    [<TestCase("456 [My Super Scope] Deploy “Premium” on Todo", "feat/Deploy-Premium-on-Todo--456", "feat: Deploy “Premium” on Todo #456")>]
+    let ``get with Work Item pattern returns Branch name and Commit message`` input expectedBranchName expectedCommitMsg =
         let result = OptionsFactory.get input
 
-        let branchName = result |> List.find (fun (name, _) -> name = "Branch name") |> snd
+        let branchName = result |> Map.find "Branch name"
 
-        let commitMsg =
-            result |> List.find (fun (name, _) -> name = "Commit message") |> snd
+        let commitMsg = result |> Map.find "Commit message"
 
-        branchName.Should().Be("feat/update-dependencies--123") |> ignore
-        commitMsg.Should().Be("feat: update dependencies #123") |> ignore
+        branchName.Should().Be(expectedBranchName) |> ignore
+        commitMsg.Should().Be(expectedCommitMsg) |> ignore
 
     [<Test>]
-    member _.``get with bookmarklet returns Decoded Bookmarklet``() =
+    let ``get with bookmarklet returns Decoded Bookmarklet`` () =
         let input = "javascript:(function(){alert('hello%20world');})();"
         let result = OptionsFactory.get input
 
-        let bookmarklet = result |> List.find (fun (name, _) -> name = "Bookmarklet") |> snd
+        let bookmarklet = result |> Map.find "Bookmarklet"
         bookmarklet.Should().Be("alert('hello world');") |> ignore
 
     [<Test>]
-    member _.``get with plain text returns default options including Json``() =
+    let ``get with plain text returns default options including Json`` () =
         let input = "plain text"
         let result = OptionsFactory.get input
 
-        result
-        |> List.exists (fun (name, _) -> name = "Json")
-        |> _.Should().BeTrue()
-        |> ignore
+        result |> Map.containsKey "Json" |> _.Should().BeTrue() |> ignore
 
-        let jsonVal = result |> List.find (fun (name, _) -> name = "Json") |> snd
+        let jsonVal = result |> Map.find "Json"
         jsonVal.Should().Be("\"plain text\"") |> ignore
