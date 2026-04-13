@@ -21,6 +21,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pinicola.FSharp", "Pinicola
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Pinicola.FSharp.SpectreConsole", "Pinicola.FSharp\Pinicola.FSharp.SpectreConsole\Pinicola.FSharp.SpectreConsole.fsproj", "{8CD90D5E-FE21-4174-9328-B0B92B9C1F3C}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "SlashSlash.Tests", "SlashSlash.Tests\SlashSlash.Tests.fsproj", "{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,18 @@ Global
 		{8CD90D5E-FE21-4174-9328-B0B92B9C1F3C}.Release|x64.Build.0 = Release|Any CPU
 		{8CD90D5E-FE21-4174-9328-B0B92B9C1F3C}.Release|x86.ActiveCfg = Release|Any CPU
 		{8CD90D5E-FE21-4174-9328-B0B92B9C1F3C}.Release|x86.Build.0 = Release|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Debug|x64.Build.0 = Debug|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Debug|x86.Build.0 = Debug|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Release|x64.ActiveCfg = Release|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Release|x64.Build.0 = Release|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Release|x86.ActiveCfg = Release|Any CPU
+		{B6DA2AC5-FD66-4ECA-A495-D67D91EC4DB7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

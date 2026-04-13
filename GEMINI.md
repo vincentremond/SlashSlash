@@ -23,17 +23,22 @@ The project is a simple interactive CLI application (`SlashSlash` project) that 
 - **Restore Tools:** `dotnet tool restore`
 - **Build:** `dotnet build` or run `.\build.ps1`
 - **Run:** `dotnet run --project SlashSlash/SlashSlash.fsproj`
-- **Test:** (TODO: Identify test commands if applicable)
+- **Test:** `dotnet test` (Runs tests in `Pinicola.FSharp.Tests` and `SlashSlash.Tests`)
 
 ## Development Conventions
 
 - **Language:** F# is the primary language. Adhere to F# idiomatic patterns (e.g., pipeline operators, pattern matching).
 - **Dependency Management:** Uses [Paket](https://fsprojects.github.io/Paket/). Dependencies are defined in `paket.dependencies` and integrated via `Paket.Restore.targets`.
 - **UI:** Interactive CLI using `Spectre.Console`. Use `Pinicola.FSharp.SpectreConsole` for higher-level UI abstractions.
+- **Testing:**
+  - Framework: [NUnit](https://nunit.org/)
+  - Assertions: [AwesomeAssertions](https://awesomeassertions.org/) (a fork of FluentAssertions)
 - **Modularization:** Shared logic should be placed in the `Pinicola.FSharp` project when applicable.
 
 ## Key Files
-- `SlashSlash/Program.fs`: Main entry point and transformation logic.
+- `SlashSlash/OptionsFactory.fs`: Logic for generating transformation options.
+- `SlashSlash/Program.fs`: Main entry point and CLI loop.
+- `SlashSlash.Tests/`: Unit tests for `SlashSlash` project.
 - `SlashSlash/SlashSlash.fsproj`: Main project file.
 - `Pinicola.FSharp/`: Library containing utility functions for Strings, Regex, and Spectre.Console.
 - `build.ps1`: Simple build script.

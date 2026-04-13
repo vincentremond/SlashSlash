@@ -1,0 +1,6 @@
+group Tests
+FSharp.Core
+Microsoft.NET.Test.Sdk
+NUnit
+NUnit3TestAdapter
+AwesomeAssertions

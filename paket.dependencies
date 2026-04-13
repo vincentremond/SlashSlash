@@ -4,3 +4,11 @@ storage: none
 nuget FSharp.Core
 nuget Newtonsoft.Json
 nuget TextCopy
+
+group Tests
+    source https://api.nuget.org/v3/index.json
+    nuget AwesomeAssertions
+    nuget FSharp.Core
+    nuget Microsoft.NET.Test.Sdk
+    nuget NUnit
+    nuget NUnit3TestAdapter
