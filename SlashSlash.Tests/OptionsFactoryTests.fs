@@ -18,14 +18,37 @@ module OptionsFactoryTests =
         let result = OptionsFactory.get input
         result |> shouldContainKey "Branch name" expected
 
-    [<TestCase("#123 [core] update dependencies", "feat/update-dependencies--123", "feat: update dependencies #123")>]
-    [<TestCase("#123 🎯[core] update dependencies", "feat/update-dependencies--123", "feat: update dependencies #123")>]
-    [<TestCase("456 [My Super Scope] Deploy “Premium” on Todo", "feat/Deploy-Premium-on-Todo--456", "feat: Deploy “Premium” on Todo #456")>]
-    let ``get with Work Item pattern returns Branch name and Commit message`` input expectedBranchName expectedCommitMsg =
+    let ``get with Work Item pattern returns Branch name and Commit message source`` = [|
+        TestCaseData(
+            "#123 [MyApp] update dependencies",
+            [
+                ("Branch name", "feat/update-dependencies--123")
+                ("Commit message", "feat: update dependencies #123")
+                ("Branch name with scope", "core/MyApp/update-dependencies--123")
+                ("Commit message with scope", "core(MyApp): update dependencies #123")
+            ]
+        )
+        TestCaseData(
+            "#123 🎯[core] update dependencies",
+            [
+                ("Branch name", "feat/update-dependencies--123")
+                ("Commit message", "feat: update dependencies #123")
+            ]
+        )
+        TestCaseData(
+            "456 [My Super Scope] Deploy “Premium” on Todo",
+            [
+                ("Branch name", "feat/Deploy-Premium-on-Todo--456")
+                ("Commit message", "feat: Deploy “Premium” on Todo #456")
+            ]
+        )
+    |]
+
+    [<TestCaseSource("get with Work Item pattern returns Branch name and Commit message source")>]
+    let ``get with Work Item pattern returns Branch name and Commit message`` input (expected: (string * string) list) =
         let result = OptionsFactory.get input
 
-        result |> shouldContainKey "Branch name" expectedBranchName
-        result |> shouldContainKey "Commit message" expectedCommitMsg
+        expected |> List.iter (fun (key, value) -> result |> shouldContainKey key value)
 
     [<TestCase("javascript:(function(){alert('hello%20world');})();", "alert('hello world');")>]
     let ``get with bookmarklet returns Decoded Bookmarklet`` input expected =

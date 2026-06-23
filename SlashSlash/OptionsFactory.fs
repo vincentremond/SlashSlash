@@ -20,8 +20,6 @@ module OptionsFactory =
 
     let get clipboardContent =
 
-        let chars = clipboardContent |> List.ofSeq
-
         let items =
             match clipboardContent with
             | MatchRegex (Regex @"^C:\\(?<EndOfPath>.+)$") m ->
@@ -29,9 +27,12 @@ module OptionsFactory =
                 let unitPrefix = "/mnt/c/" // WSL unit prefix for C drive
                 let unitEndOfPath = endOfPath.Replace("\\", "/")
                 let unixPath = $"{unitPrefix}{unitEndOfPath}"
-                [ "Unix path", unixPath ]
+                [
+                    "Unix path", unixPath
+                    "Json", (json clipboardContent)
+                ]
 
-            | MatchRegex (Regex @"^(?<type>(fix|feat))(?:\((?<scope>.+)\))?: (?<description>.+)$") m ->
+            | MatchRegex (Regex @"^(?<type>(fix|feat|refactor))(?:\((?<scope>.+)\))?: (?<description>.+)$") m ->
                 let conventionalCommitDescription =
                     m.Groups["description"].Value
                     |> String.replaceDiacritics
@@ -50,10 +51,13 @@ module OptionsFactory =
 
                 let subject = m.Groups["Subject"].Value
                 let branchSubject = subject |> String.replaceDiacritics |> String.replace " " "-"
+                let scope = m.Groups["Scope"].Value
 
                 [
                     "Branch name", $"""feat/{branchSubject}--{id}"""
                     "Commit message", $"""feat: {subject} #{id}"""
+                    "Branch name with scope", $"""core/{scope}/{branchSubject}--{id}"""
+                    "Commit message with scope", $"""core({scope}): {subject} #{id}"""
                 ]
 
             | StartsWithICIC "javascript:" -> [
